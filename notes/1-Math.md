@@ -8,7 +8,7 @@
 
 - [Transformation](#Transformation)
   - [Matrices](#Matrices)
-  - [2D transformations: rotation, scale, shear](#2D-transformations:-rotation,-scale,-shear)
+  - [2D transformations](#2D-transformations)
   - [Homogeneous coordinates](#Homogeneous-coordinates)
   - [Composing transforms](#Composing-transforms)
   - [  3D transformations](#3D-transformations)
@@ -97,7 +97,7 @@ $$
 
 <img src="1-Math.assets/image-20230413170022351.png" alt="image-20230413170022351" style="zoom:67%;" />
 
-### 2D transformations: rotation, scale, shear
+### 2D transformations
 
 
 
