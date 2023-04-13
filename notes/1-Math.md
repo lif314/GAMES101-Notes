@@ -1,17 +1,17 @@
 # Math
 
-- [A Swift and Brutal Introduction to Linear Algebra](#A Swift and Brutal Introduction to Linear Algebra)
-  - [Dot Product in Graphics](#Dot Product in Graphics)
-  - [Cross  Product in Graphics](#Cross  Product in Graphics)
-  - [Orthonormal bases and coordinate frames](#Orthonormal bases and coordinate frames)
+- [A Swift and Brutal Introduction to Linear Algebra](#A-Swift-and-Brutal-Introduction-to-Linear-Algebra)
+  - [Dot Product in Graphics](#Dot-Product-in-Graphics)
+  - [Cross  Product in Graphics](#Cross -Product-in-Graphics)
+  - [Orthonormal bases and coordinate frames](#Orthonormal-bases-and-coordinate-frames)
 
 
 - [Transformation](#Transformation)
   - [Matrices](#Matrices)
-  - [2D transformations: rotation, scale, shear](#2D transformations: rotation, scale, shear)
-  - [Homogeneous coordinates](#Homogeneous coordinates)
-  - [Composing transforms](#Composing transforms)
-  - [  3D transformations](#  3D transformations)
+  - [2D transformations: rotation, scale, shear](#2D-transformations:-rotation,-scale,-shear)
+  - [Homogeneous coordinates](#Homogeneous-coordinates)
+  - [Composing transforms](#Composing-transforms)
+  - [  3D transformations](#3D-transformations)
 
 
 
