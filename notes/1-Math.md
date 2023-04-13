@@ -1,9 +1,9 @@
 # Math
 
-- [A Swift and Brutal Introduction to Linear Algebra](#-A Swift and Brutal Introduction to Linear Algebra)
-  - [Dot Product in Graphics](#-Dot Product in Graphics)
-  - [Cross  Product in Graphics](#-Cross  Product in Graphics)
-  - [Orthonormal bases and coordinate frames](#-Orthonormal bases and coordinate frames)
+- [A Swift and Brutal Introduction to Linear Algebra](#A Swift and Brutal Introduction to Linear Algebra)
+  - [Dot Product in Graphics](#Dot Product in Graphics)
+  - [Cross  Product in Graphics](#Cross  Product in Graphics)
+  - [Orthonormal bases and coordinate frames](#Orthonormal bases and coordinate frames)
 
 
 - [Transformation](#Transformation)
