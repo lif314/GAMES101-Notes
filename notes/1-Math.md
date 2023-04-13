@@ -2,7 +2,7 @@
 
 - [A Swift and Brutal Introduction to Linear Algebra](#A-Swift-and-Brutal-Introduction-to-Linear-Algebra)
   - [Dot Product in Graphics](#Dot-Product-in-Graphics)
-  - [Cross  Product in Graphics](#Cross -Product-in-Graphics)
+  - [Cross  Product in Graphics](#Cross-Product-in-Graphics)
   - [Orthonormal bases and coordinate frames](#Orthonormal-bases-and-coordinate-frames)
 
 
@@ -17,7 +17,7 @@
 
 
 
-## A ==Swift== and ==Brutal== Introduction to Linear Algebra
+## A Swift and Brutal Introduction to Linear Algebra
 
 - Basic Mathematics
   - Linear algebra, calculus, statistics
@@ -32,7 +32,7 @@
 ### Dot Product in Graphics
 
 - Find angle between two vectors
-- Find ==projection== of one vector on another
+- Find **projection** of one vector on another
 
 ![image-20230413162748448](1-Math.assets/image-20230413162748448.png)
 
@@ -70,7 +70,7 @@ $$
 
 ![image-20230413163941684](1-Math.assets/image-20230413163941684.png)
 
-==corner case, up to you==
+**corner case, up to you**
 
 ### Orthonormal bases and coordinate frames
 
