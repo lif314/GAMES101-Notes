@@ -4,6 +4,7 @@
   - [Perspective Projection](#Perspective-Projection)
   - [Canonical Cube to Screen](#Canonical-Cube-to-Screen)
   - [Rasterization:  Drawing to Raster Displays](#Rasterization: -Drawing-to-Raster-Displays)
+- [Rasterization 2: Antialiasing and Z-Buffering](#Rasterization-2:-Antialiasing-and-Z-Buffering)
 
 
 
@@ -129,20 +130,20 @@
   - 右边：每一行设计一个AABB
 
 <center>
-    <img src="2-Rasterization.assets/image-20230414153109408.png" alt="image-20230414153109408" width="300"/>
-    <img src="2-Rasterization.assets/image-20230414153126571.png" alt="image-20230414153126571" width="300"/>
+    <img src="2-Rasterization.assets/image-20230414153109408.png" alt="image-20230414153109408" width="350"/><img src="2-Rasterization.assets/image-20230414153126571.png" alt="image-20230414153126571"/>
 </center>
 
-   
+
+
 
 ----
 
 **Aliasing  锯齿**：抗锯齿（反走样）
 
 <center class="half">
-    <img src="2-Rasterization.assets/image-20230414154510425.png" alt="image-20230414154510425" width="300"/>
-    <img src="2-Rasterization.assets/image-20230414154525554.png" alt="image-20230414154525554" width="300"/>
+    <img src="2-Rasterization.assets/image-20230414154510425.png" alt="image-20230414154510425" width="350"/><img src="2-Rasterization.assets/image-20230414154525554.png" alt="image-20230414154525554"/>
 </center>
+
 
 <center>
     <img src="2-Rasterization.assets/image-20230414154850259.png" alt="image-20230414154850259" style="zoom:80%;" />
@@ -151,8 +152,7 @@
 
 
 
-
-
+## Rasterization 2: Antialiasing and Z-Buffering
 
 
 
