@@ -141,19 +141,26 @@
 
 **Aliasing  锯齿**：抗锯齿（反走样）
 
-<center class="half">
-    <img src="2-Rasterization.assets/image-20230414154510425.png" alt="image-20230414154510425" width="300"/><img src="2-Rasterization.assets/image-20230414154525554.png" alt="image-20230414154525554" width="300"/>
-</center>
+<br/>
 
-<center>
-    <img src="2-Rasterization.assets/image-20230414154850259.png" alt="image-20230414154850259" style="zoom:60%;" />
-</center>
+<img src="2-Rasterization.assets/image-20230414154510425.png" alt="image-20230414154510425" width="50%"/><img src="2-Rasterization.assets/image-20230414154525554.png" alt="image-20230414154525554" width="50%"/>
+<br/>
+
+
+
+<img src="2-Rasterization.assets/image-20230414154850259.png" alt="image-20230414154850259" style="zoom:60%;" />
 
 
 
 
 
 ## Rasterization 2: Antialiasing and Z-Buffering
+
+> 反走样 深度缓冲
+
+
+
+
 
 
 
