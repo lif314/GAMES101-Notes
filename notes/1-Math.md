@@ -288,6 +288,7 @@ $$
 <img src="1-Math.assets/image-20230414100411264.png" alt="image-20230414100411264" style="zoom:67%;" />
 
 先进行旋转变换，再进行平移变换
+
 $$
 \left(\begin{array}{l}
 x^{\prime} \\
