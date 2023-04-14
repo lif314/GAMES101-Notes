@@ -52,9 +52,14 @@
 ### Cross Product in Graphics
 
 $$
-\vec{a}\times \vec{b}=-\vec{b}\times \vec{a} \\
+\vec{a}\times \vec{b}=-\vec{b}\times \vec{a}
+$$
+
+$$
 ||\vec{a}\times \vec{b}||=||\vec{a}||||\vec{b}||\sin{\theta}
 $$
+
+
 
 <img src="1-Math.assets/image-20230413164013038.png" alt="image-20230413164013038" style="zoom: 67%;" />
 
@@ -186,8 +191,6 @@ $$
 **Affine Transformations（仿射变换）**
 
 - Affine map = linear map + translation
-
-
 
 $$
 \left(\begin{array}{c}
@@ -337,139 +340,132 @@ $$
 
 ## Viewing transformation
 
-> 观测变换
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### View/Camera transformation
 
+> 拍照流程：（**MVP变换**）
+>
+> - Model transformation（模型变换）: 人物找到一个好的位置
+>
+> - **View transformation**（视图变换）：相机在一个好的视角，相机放在什么位置
+> - Projection transformation（投影变换）：将3D场景变为2D图片
 
+
+
+----
+
+**Define the camera 定义相机**
+
+- 相机位置
+- 相机看的方向
+- 相机的向上方向
+
+<img src="1-Math.assets/image-20230414105324416.png" alt="image-20230414105324416" style="zoom:67%;" />
+
+*任何相机的运动都可以看作模型在动，而相机不动，因此可以将相机定义在**原点**，**$y$轴**为向上方向，永远向**$-z$轴**看*
+
+<img src="1-Math.assets/image-20230414105529752.png" alt="image-20230414105529752" style="zoom:67%;" />
+
+----
+
+**View Transformation** : 将任意相机移到原点标准相机setting
+
+<img src="1-Math.assets/image-20230414110028931.png" alt="image-20230414110028931" style="zoom:67%;" />
+
+<img src="1-Math.assets/image-20230414110045491.png" alt="image-20230414110045491" style="zoom:67%;" />
+
+*旋转矩阵是正交矩阵，逆矩阵就是转置矩阵*
+
+
+
+---
+
+**Summary**
+
+<img src="1-Math.assets/image-20230414110455966.png" alt="image-20230414110455966" style="zoom:67%;" />
 
 
 
 ### Projection transformation
 
-> 投影变换
+> - 投影变换：3D –> 2D
+>   - 透视投影：近大远小，人眼成像
+>   - 正交投影：没有近大远小，工程制图
 
-
+<img src="1-Math.assets/image-20230414110945294.png" alt="image-20230414110945294" style="zoom:67%;" />
 
 #### Orthographic projection
 
 > 正交投影
 
+---
 
+**Definition**
 
+- A simple way of understanding
 
+<img src="1-Math.assets/image-20230414111112476.png" alt="image-20230414111112476" style="zoom:67%;" />
+
+- *任意长方体映射成一个标准正方体* 
+  - 注意远近$[f,n]$是沿$-z$方向看（右手系）
+  - 没有考虑旋转
+
+<img src="1-Math.assets/image-20230414111339364.png" alt="image-20230414111339364" style="zoom:67%;" />
+
+---
+
+**Transformation matrix**
+
+<img src="1-Math.assets/image-20230414112609073.png" alt="image-20230414112609073" style="zoom:67%;" />
 
 
 
 #### Perspective projection
 
-> 透视投影
+> 透视投影：近大远小；平行线不再平行，会相交
 
+<img src="1-Math.assets/image-20230414112932717.png" alt="image-20230414112932717" style="zoom:50%;" />
 
+----
 
+**Definition**
 
+- 先将截锥体“挤压”成长方体
+- 然后再进行正交投影
 
+<img src="1-Math.assets/image-20230414113349772.png" alt="image-20230414113349772" style="zoom:67%;" />
 
 
 
+----
 
+**“squish” Matrix: $M_{persp \rightarrow ortho}$**
 
+- *similar triangle: 挤压$y$轴*
 
+<img src="1-Math.assets/image-20230414113916388.png" alt="image-20230414113916388" style="zoom:67%;" />
 
+- *所有点都要经过和$y$轴一样的上下“挤压”变换，然后考虑前后移动*
 
+<img src="1-Math.assets/image-20230414114042800.png" alt="image-20230414114042800" style="zoom:67%;" />
 
+- *取特殊点求解未知数*
 
+<img src="1-Math.assets/image-20230414114434038.png" alt="image-20230414114434038" style="zoom:67%;" />
 
+- Observation: the third row is responsible for z’ 
 
+  - **Any point on the near plane will not change**
 
+  <img src="1-Math.assets/image-20230414114647939.png" alt="image-20230414114647939" style="zoom: 33%;" />
 
+  -  **Any point’s z on the far plane will not change**
 
+  <img src="1-Math.assets/image-20230414114839981.png" alt="image-20230414114839981" style="zoom:33%;" />
 
 
 
+- *解未知数*
 
+<img src="1-Math.assets/image-20230414115135401.png" alt="image-20230414115135401" style="zoom:67%;" />
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+> 中间点的位置变化
