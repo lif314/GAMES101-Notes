@@ -36,14 +36,14 @@
 - Find angle between two vectors
 - Find **projection** of one vector on another
 
-![image-20230413162748448](1-Math.assets/image-20230413162748448.png)
+<img src="1-Math.assets/image-20230413162748448.png" alt="image-20230413162748448" style="zoom:67%;" />
 
 - Measure how close  two directions are
 
 - Decompose a vector
 - Determine forward/backward
 
-![image-20230413163042639](1-Math.assets/image-20230413163042639.png)
+<img src="1-Math.assets/image-20230413163042639.png" alt="image-20230413163042639" style="zoom:67%;" />
 
 
 
@@ -56,27 +56,27 @@ $$
 ||\vec{a}\times \vec{b}||=||\vec{a}||||\vec{b}||\sin{\theta}
 $$
 
-<img src="1-Math.assets/image-20230413164013038.png" alt="image-20230413164013038" style="zoom:80%;" />
+<img src="1-Math.assets/image-20230413164013038.png" alt="image-20230413164013038" style="zoom: 67%;" />
 
 - Cross product is orthogonal to two initial vectors 
 - Direction determined by right-hand rule
 - Useful in constructing coordinate systems
 
-![image-20230413163823732](1-Math.assets/image-20230413163823732.png)
+<img src="1-Math.assets/image-20230413163823732.png" alt="image-20230413163823732" style="zoom:67%;" />
 
 - Determine left / right
 
-<img src="1-Math.assets/image-20230413163915545.png" alt="image-20230413163915545" style="zoom:50%;" />
+<img src="1-Math.assets/image-20230413163915545.png" alt="image-20230413163915545" style="zoom: 67%;" />
 
 - Determine inside / outside $\vec{AB} \times \vec{AP}, \vec{BC} \times \vec{BP}, \vec{CA} \times \vec{CP} $ 
 
-![image-20230413163941684](1-Math.assets/image-20230413163941684.png)
+<img src="1-Math.assets/image-20230413163941684.png" alt="image-20230413163941684" style="zoom:67%;" />
 
 **corner case, up to you**
 
 ### Orthonormal bases and coordinate frames
 
-<img src="1-Math.assets/image-20230413165010254.png" alt="image-20230413165010254" style="zoom:80%;" />
+<img src="1-Math.assets/image-20230413165010254.png" alt="image-20230413165010254" style="zoom: 67%;" />
 
 
 
@@ -132,16 +132,15 @@ $$
 
 <img src="1-Math.assets/image-20230414091605734.png" alt="image-20230414091605734" style="zoom:67%;" />
 
-旋转矩阵的逆就是它的转置：正交矩阵 $A^{-1} = A^T$
+旋转矩阵的逆就是它的转置：正交矩阵  $A^{-1} = A^T$
 
-<img src="1-Math.assets/image-20230414101022500.png" alt="image-20230414101022500" style="zoom:67%;" />
+<img src="1-Math.assets/image-20230414101022500.png" alt="image-20230414101022500" style="zoom: 50%;" />
 
 ----
 
 **Linear Transforms（线性变换） = Matrices**
 
 <center><img src="1-Math.assets/image-20230414092356178.png" alt="image-20230414092356178" style="zoom:67%;" /></center>
-
 
 
 ----
@@ -167,6 +166,7 @@ $$
 - point + vector = point 点沿着向量移动
 - point + point = ?? (point) 两个点的中点
 
+
 $$
 \left(\begin{array}{c}
 x \\
@@ -186,6 +186,8 @@ $$
 **Affine Transformations（仿射变换）**
 
 - Affine map = linear map + translation
+
+
 
 $$
 \left(\begin{array}{c}
@@ -209,7 +211,9 @@ t_y \\
 \end{array}\right)
 $$
 
+
 - Using homogenous coordinates
+
 
 $$
 \left(\begin{array}{c}
