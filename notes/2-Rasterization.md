@@ -112,7 +112,8 @@
 
 <center class="half">
     <img src="2-Rasterization.assets/image-20230414152005543.png" alt="image-20230414152005543"  width="300" />
-    <img src="2-Rasterization.assets/image-20230414152019127.png" alt="image-20230414152019127" width="300"/></center>
+    <img src="2-Rasterization.assets/image-20230414152019127.png" alt="image-20230414152019127" width="350"/></center>
+
 
 - Inside? Recall: Three Cross Products!  （右手螺旋定则）
   - $P_0P_1\times P_0Q$ : 外  
@@ -130,7 +131,7 @@
   - 右边：每一行设计一个AABB
 
 <center>
-    <img src="2-Rasterization.assets/image-20230414153109408.png" alt="image-20230414153109408" width="350"/><img src="2-Rasterization.assets/image-20230414153126571.png" alt="image-20230414153126571"/>
+    <img src="2-Rasterization.assets/image-20230414153109408.png" alt="image-20230414153109408" width="350"/><img src="2-Rasterization.assets/image-20230414153126571.png" alt="image-20230414153126571" width="350"/>
 </center>
 
 
@@ -141,13 +142,13 @@
 **Aliasing  锯齿**：抗锯齿（反走样）
 
 <center class="half">
-    <img src="2-Rasterization.assets/image-20230414154510425.png" alt="image-20230414154510425" width="350"/><img src="2-Rasterization.assets/image-20230414154525554.png" alt="image-20230414154525554"/>
+    <img src="2-Rasterization.assets/image-20230414154510425.png" alt="image-20230414154510425" width="300"/><img src="2-Rasterization.assets/image-20230414154525554.png" alt="image-20230414154525554" width="300"/>
 </center>
-
 
 <center>
-    <img src="2-Rasterization.assets/image-20230414154850259.png" alt="image-20230414154850259" style="zoom:80%;" />
+    <img src="2-Rasterization.assets/image-20230414154850259.png" alt="image-20230414154850259" style="zoom:60%;" />
 </center>
+
 
 
 
