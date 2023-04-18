@@ -231,13 +231,250 @@
 
 #### Polygon Mesh (Explicit)
 
+> 最广泛的使用
+
 <div align="center">
     <img src="4-Geometry.assets/image-20230418174158930.png" alt="image-20230418174158930" style="zoom:67%;" />
 </div>
 
 
 
+**The Wavefront Object File (.obj) Format**
+
+>  三角形面表示物体的文件格式：文本文件，点，法线，纹理坐标分开存储
+>
+> 立方体例子（存在冗余）：
+>
+> - v: 8个点
+> - vn：6个面的6种不同的法线
+> - vt：12个纹理坐标
+> - f：三角形点的连接情况，(v/vt/vn)下标
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418175934279.png" alt="image-20230418175934279" style="zoom:67%;" />
+</div>
+
+## Curves
+
+> 曲线：显示几何
+
+
+
+### Bézier Curves
+
+> 贝塞尔曲线（显示表示方法）：关于参数t的曲线
+>
+> - 使用一系列的控制点去定义一条曲线，沿着某一方向，必须经过起止点
+
+---
+
+**Defining Cubic Bézier Curve With Tangents**
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418182725412.png" alt="image-20230418182725412" style="zoom:67%;" />
+</div>
+
+----
+
+**Evaluating Bézier Curves  (de Casteljau Algorithm)**
+
+- Consider three points (quadratic Bezier) 二次贝塞尔曲线
+
+- Insert a point using linear interpolation 假设起点在时间0，终点在时间1，找出时间t点在哪里。
+  - 先假设起始点为$b_0b_1$，找到$t$对应的点$b_0^1$
+
+<div align="center"> 
+    <img src="4-Geometry.assets/image-20230418183319945.png" alt="image-20230418183319945" style="zoom:80%;" />
+</div>
+
+- Insert on both edges
+  - 然后假设起始点为$b_1b_2$，找到$t$时刻对应的点$b_1^1$
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418183351448.png" alt="image-20230418183351448" style="zoom:80%;" />
+</div>
+
+- Repeat recursively
+  - 最后假设起始点为$b_0^1b_1^1$，找到$t$对应点$b_0^2$。这就是最终的结果
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418183432604.png" alt="image-20230418183432604" style="zoom:80%;" />
+</div>
+
+- Run the same algorithm for every t in [0,1]
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418184229491.png" alt="image-20230418184229491" style="zoom:80%;" />
+</div>
+
+---
+
+**Four input points in total** 递归求解
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418184545387.png" alt="image-20230418184545387" style="zoom:67%;" />
+</div>
+
+> Animation: Steven Wittens, Making Things with Maths, http://acko.net
+
+
+
+### Bézier Curves  Algebraic Formula
+
+> - 每两个点之间做线性插值
+> - 重复构造
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418185240824.png" alt="image-20230418185240824" style="zoom:80%;" />
+</div>
+
+
+
+- 二次贝塞尔曲线示例
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418185355602.png" alt="image-20230418185355602" style="zoom:67%;" />
+</div>
+
+- 由所有控制点的线性组合而成，系数是个多项式(Bernstein polynomial) 二项分布
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418185439096.png" alt="image-20230418185439096" style="zoom:80%;" />
+</div>
+
+- 示例：空间点也可以成立
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418185509951.png" alt="image-20230418185509951" style="zoom:80%;" />
+</div>
+
+---
+
+**Cubic Bézier Basis Functions**
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418190445545.png" alt="image-20230418190445545" style="zoom:67%;" />
+</div>
+
+- **Properties of Bézier Curves**
+  - 在**仿射变换**下保持不变：将空间点进行仿射变换后画出的曲线与原始点画出的曲线经过仿射变换后的结果相同
+  - 凸包性质：曲线一点在几个控制点的凸包内
+
+<center align="center">
+    <img src="4-Geometry.assets/image-20230418190542774.png" alt="image-20230418190542774" style="zoom:80%;" />
+</center>
+
+> 凸包：包含所有点的最小多边形
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418191212940.png" alt="image-20230418191212940" style="zoom:50%;" />
+</div>
+
+### Piecewise Bézier Curves
+
+> 逐段贝塞尔曲线
+
+- Higher-Order Bézier Curves?
+  - 高阶贝塞尔曲线形成的曲线不容易控制
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418191457480.png" alt="image-20230418191457480" style="zoom:67%;" />
+</div>
+
+- Piecewise Bézier Curves 逐段，**通常是4个点** PS种的钢笔工具，沿着两边可以拉动曲线
+  - demo: David Eck, http://math.hws.edu/eck/cs424/notes2013/canvas/bezier.html
+  - 曲线连续：导数要连续，控制杆两端等距共线
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418191612408.png" alt="image-20230418191612408" style="zoom:67%;" />
+</div>
+
+- Piecewise Bézier Curve – Continuity 连续性
+
+<img src="4-Geometry.assets/image-20230418191709395.png" alt="image-20230418191709395" style="zoom:67%;" />
+
+- $C^0$连续：第一段终止点是第二段的起始点
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418192212234.png" alt="image-20230418192212234" style="zoom:50%;" />
+</div>
+
+- $C^1$ continuity：第2段也是连续（一阶导数连续）
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418193923134.png" alt="image-20230418193923134" style="zoom:50%;" />
+</div>
+
+
+
+----
+
+**Other types of splines**
+
+- Spline(样条)
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418194228433.png" alt="image-20230418194228433" style="zoom:67%;" />
+</div>
+
+
+
+- B-splines 基函数样条，贝塞尔曲线的扩展，极其复杂
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418194251323.png" alt="image-20230418194251323" style="zoom:50%;" />
+</div>
+
+> 更多曲线学习(NURBS)：Prof. Shi-Min Hu’s course: https://www.bilibili.com/video/ av66548502?from=search&seid=65256805876131485
+
+
+
+## Surfaces
+
+### Bézier Surfaces
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230418203654182.png" alt="image-20230418203654182" style="zoom:80%;" />
+</div>
+
+
+
+**Bicubic Bézier Surface Patch**
+
+> 贝塞尔曲线–>贝塞尔曲面：4*4控制点
+
+<img src="4-Geometry.assets/image-20230418203731348.png" alt="image-20230418203731348" style="zoom:67%;" />
+
+**Visualizing Bicubic Bézier Surface Patch**
+
+> - 在两个方向上使用贝塞尔曲线–> 双线性插值
+>
+> - Animation: Steven Wittens, Making Things with Maths, http://acko.net
+
+<img src="4-Geometry.assets/image-20230418203755098.png" alt="image-20230418203755098" style="zoom:80%;" />
+
+### Evaluating Bézier Surfaces
+
+**Evaluating Surface Position For Parameters (u,v)**
+
+> 两个时间$u,v$
+
+<img src="4-Geometry.assets/image-20230418204204996.png" alt="image-20230418204204996" style="zoom:67%;" />
 
 
 
 
+
+**Method: Separable 1D de Casteljau Algorithm**
+
+> 先沿着$u$找4个点，然后沿着$v$。显示表示–>参数映射形式
+
+<img src="4-Geometry.assets/image-20230418204236661.png" alt="image-20230418204236661" style="zoom:80%;" />
+
+<img src="4-Geometry.assets/image-20230418204253144.png" alt="image-20230418204253144" style="zoom:80%;" />
+
+### Mesh Operations: Geometry Processing
+
+> 几何处理：网格细化，网格简化，网格正规化
+
+<img src="4-Geometry.assets/image-20230418204322919.png" alt="image-20230418204322919" style="zoom:80%;" />
