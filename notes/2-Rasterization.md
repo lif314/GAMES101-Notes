@@ -8,12 +8,6 @@
   - [Antialiasing](#Antialiasing)
     - [Sampling theory](#Sampling-theory)
     - [Antialiasing in practice](#Antialiasing-in-practice)
-  - [Visibility/occlusion](#Visibility/occlusion)
-    - [Z-buffering](#Z-buffering)
-
-
-
-
 
 
 
@@ -350,10 +344,6 @@ Wider Filter Kernel = Lower Frequencies 卷积核越大，在图像上进行滤�
   - DLSS (Deep Learning Super Sampling)
 
 
-
-### Visibility/occlusion
-
-#### Z-buffering
 
 
 
