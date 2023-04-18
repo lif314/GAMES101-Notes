@@ -75,15 +75,11 @@ Rasterization
 
 
 
-### Shading
+### Blinn-Phong reflectance model
 
 - Review: MVP –> Rasterization –> Z-Buffer
 
 <img src="3-Shading.assets/image-20230415152042393.png" alt="image-20230415152042393" style="zoom:67%;" />
-
-
-
- #### Illumination & Shading
 
 ----
 
@@ -165,7 +161,9 @@ Rasterization
 
 <img src="3-Shading.assets/image-20230415162650499.png" alt="image-20230415162650499" style="zoom:80%;" />
 
-----
+
+
+### Shading models / frequencies
 
 **Shading Frequencies** 着色频率
 
@@ -213,7 +211,7 @@ Rasterization
 
 
 
-#### Graphics Pipeline
+### Graphics Pipeline
 
 > Real-time Rendering 实时渲染管线：3D场景到2D图的过程
 
@@ -503,9 +501,9 @@ Point Query vs. (Avg.) Range Query
 
 - Irregular Pixel Footprint in Texture: 屏幕上的像素映射到纹理上不一定是一个正方形。如果是对角线形状，则会覆盖较大的区域
 
-![image-20230418134912637](3-Shading.assets/image-20230418134912637.png)
-
-
+<div align="center">
+    <img src="3-Shading.assets/image-20230418134912637.png" alt="image-20230418134912637" style="zoom:67%;" />
+</div>
 
 - Anisotropic Filtering （各向异性过滤）
   - 不用限制在正方形区域，可以用矩形来近似，但也没有完全解决。
@@ -520,6 +518,149 @@ Point Query vs. (Avg.) Range Query
 
 
 ### Applications of Textures
+
+> Review:
+>
+> <div align="center">
+> <img src="3-Shading.assets/image-20230418142402239.png" alt="image-20230418142402239" style="zoom:67%;" />
+> </div>
+
+- In modern GPUs, **texture = memory + range query (filtering)**
+  - General method to bring data to fragment calculations
+
+- Many applications
+  - Environment lighting 环境光照（环境贴图）：假设环境光来自无线远处
+  - Store microgeometry  
+  - Procedural textures 
+  - Solid modeling 
+  - Volume rendering 体积渲染
+  - ….
+
+#### Environment lighting
+
+- 环境贴图(Environment Map)：假设环境光来自无线远处，只记录方向信息
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418142937655.png" alt="image-20230418142937655" style="zoom:67%;" />
+</div>
+
+- Environmental Lighting 环境光照：将环境光记录在纹理贴图上 — 存储环境光的方法
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418143230686.png" alt="image-20230418143230686" style="zoom:67%;" />
+</div>
+
+
+
+- Spherical Environment Map：将环境光记录在球面上，并进行展开
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418143055430.png" alt="image-20230418143055430" style="zoom:50%;" />
+</div>
+
+- 球面展开存在扭曲问题（上方）：不是均匀的记录光照信息
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418143141627.png" alt="image-20230418143141627" style="zoom:67%;" />
+</div>
+
+- Cube Map: 假设球有一个立方体包围盒，从球心连一条线交与立方体，将信息存在立方体上
+
+<div align=center>
+    <img src="3-Shading.assets/image-20230418143914015.png" alt="image-20230418143914015" style="zoom:50%;" />
+</div>
+
+记录在立方体上，并展开，但是给定一个方向，需要计算是记录在哪个面上
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418144303554.png" alt="image-20230418144303554" style="zoom:50%;" />
+</div>
+
+
+
+#### Textures can affect shading
+
+> **凹凸贴图(法线贴图：法线变化导致着色是发生明暗变化，从而造成凹凸不平的效果)**：改变任意点的法线。不会改变物体的几何信息
+>
+> - 纹理上可以定义任意位置任何的属性
+> - 可以在纹理上定义任意一个点的相对的高度
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418144653302.png" alt="image-20230418144653302" style="zoom:50%;" />
+</div>
+
+----
+
+**Bump Mapping**
+
+> - 法线贴图可以定义一个复杂的纹理，但不改变几何信息，没有改变原始三角形
+> - 法线贴图是为任何一个像素做一个**扰动**：通过定义不同位置的高度和临近位置的高度差来重新计算该点的法线
+> - 黑色为几何线，黄色是纹理贴图，通过这个高度计算法线
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418153852986.png" alt="image-20230418153852986" style="zoom:67%;" />
+</div>
+
+- How to perturb the normal (in flatland)
+
+> flatland case：原本法线是垂直向上的$(0,1)$，计算该点的近似切线(假设向右移动1个单位)$(1,dp)$，逆时针旋转90度就是法线$(-dp,1)$
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418155220105.png" alt="image-20230418155220105" style="zoom:67%;" />
+</div>
+
+- How to perturb the normal (in 3D)  局部坐标
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418155640098.png" alt="image-20230418155640098" style="zoom:50%;" />
+</div>
+
+- 位移贴图(Displacement mapping)
+  - 使用凹凸贴图中相同纹理，但真的去移动几何形状，改变了三角形顶点的位置
+  - 代价：三角形必须比较小，三角形之间的间隔要比纹理采样还要高，即模型比较细致
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418160016011.png" alt="image-20230418160016011" style="zoom:50%;" />
+</div>
+
+#### 3D Procedural Noise + Solid Modeling
+
+> 3D纹理：
+>
+> - 切开可以看到纹理内部信息，即定义了空间中任意的值。
+> - 实际上没有生成3D纹理的图，而是定义了一个在三维空间中噪声的函数，可以通过二值化等一系列的处理，得到想要的图形
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418160438197.png" alt="image-20230418160438197" style="zoom:67%;" />
+</div>
+
+#### Provide Precomputed Shading
+
+> 纹理做阴影：把阴影信息计算好放在纹理中，然后贴在几何上
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418160813567.png" alt="image-20230418160813567" style="zoom:50%;" />
+</div>
+
+#### 3D Textures and Volume Rendering
+
+> 体积渲染：存储在空间的信息，也可以看做是纹理信息
+
+<div align="center">
+    <img src="3-Shading.assets/image-20230418160934176.png" alt="image-20230418160934176" style="zoom:50%;" />
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
