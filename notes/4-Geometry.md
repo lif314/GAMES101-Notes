@@ -8,14 +8,6 @@
 
 
 
-
-
-
-
-
-
-
-
 ## Introduction to geometry
 
 ### Examples of geometry
@@ -473,8 +465,147 @@
 
 <img src="4-Geometry.assets/image-20230418204253144.png" alt="image-20230418204253144" style="zoom:80%;" />
 
-### Mesh Operations: Geometry Processing
+## Mesh Operations: Geometry Processing
 
 > 几何处理：网格细化，网格简化，网格正规化
 
 <img src="4-Geometry.assets/image-20230418204322919.png" alt="image-20230418204322919" style="zoom:80%;" />
+
+- Mesh Subdivision (upsampling)  上采样：增加分辨率
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230419084334906.png" alt="image-20230419084334906" style="zoom:67%;" />
+</div>
+
+- Mesh Simplification (downsampling) 下采样：降低分辨率，几何保持
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230419084408634.png" alt="image-20230419084408634" style="zoom:67%;" />
+</div>
+
+- Mesh Regularization (same #triangles) 规则化，提升质量
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230419084441488.png" alt="image-20230419084441488" style="zoom:67%;" />
+</div>
+
+### Subdivision
+
+#### Loop Subdivision
+
+> **细分：** “loop” — family name
+>
+> - 引入更多的三角形
+> - 并使**形状发生变化**，使几何更加的光滑
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230419090635110.png" alt="image-20230419090635110" style="zoom:67%;" />
+</div>
+
+
+
+- 增加三角形的数量：每个三角形内部分为4个小三角形
+- 调整三角形的位置：将三角形顶点区分为旧和新，分别使用不同规则改变其位置
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230419090648672.png" alt="image-20230419090648672" style="zoom:67%;" />
+</div>
+
+
+
+- 对于新的顶点：找到共享变边$AB$，不共享的点为$CD$，然后按照$3/8$和$1/8$进行加权平均
+
+<div align="center">
+    <img src="4-Geometry.assets/image-20230419090701150.png" alt="image-20230419090701150" style="zoom:67%;" />
+</div>
+
+
+
+- 对于旧的点：由自己和相邻旧的顶点决定。$n$为该点的度，$u$是与度有关的数，更新规则为如下：
+
+<img src="4-Geometry.assets/image-20230419090713460.png" alt="image-20230419090713460" style="zoom:67%;" />
+
+- Loop subdivision results
+
+
+
+<img src="4-Geometry.assets/image-20230419090743533.png" alt="image-20230419090743533" style="zoom:67%;" />
+
+
+
+#### Catmull-Clark Subdivision (General Mesh)
+
+> Catmull 图灵奖得主
+
+- Loop细化局限性：假设网格是三角形网格
+- Catmull-Clark: 适用于任意网格
+  - Non-quad face: 不是四边形的面
+  - 奇异点：度不是4的点
+
+<img src="4-Geometry.assets/image-20230419090833496.png" alt="image-20230419090833496" style="zoom:67%;" />
+
+- 每一条边取中点，每一个面也取一个中点，并将边的中点和面的中点进行连接
+
+> - 只要在非四边形面内加一个点，就是奇异点
+> - 经过一次细化后所有非四边形面都消失了，每个四边形面引入一个奇异点后，非四边形面消失
+> - 做一次细化，增加了非四边形面数的奇异点，并去除了所有的非四边形面
+
+<img src="4-Geometry.assets/image-20230419090845468.png" alt="image-20230419090845468" style="zoom:67%;" />
+
+- 继续在两点直接插入新的点
+
+<img src="4-Geometry.assets/image-20230419093452440.png" alt="image-20230419093452440" style="zoom:50%;" /><img src="4-Geometry.assets/image-20230419093504000.png" alt="image-20230419093504000" style="zoom:50%;" />
+
+- 调整点和边的位置：旧的点(下)，新的点(上)
+
+**FYI: Catmull-Clark Vertex Update Rules (Quad Mesh)**
+
+<img src="4-Geometry.assets/image-20230419093537588.png" alt="image-20230419093537588" style="zoom:67%;" />
+
+- Convergence: Overall Shape and Creases 适用于各种形状的面
+
+<img src="4-Geometry.assets/image-20230419093714548.png" alt="image-20230419093714548" style="zoom:67%;" />
+
+### Simplification
+
+> 曲面简化：减少三角形的数量
+
+<img src="4-Geometry.assets/image-20230419100026628.png" alt="image-20230419100026628" style="zoom:67%;" />
+
+---
+
+**Edge collapsing**: 边坍缩，把连接边的两个点捏在一起
+
+> - Collapsing An Edge 折叠边
+> - 如何判断那些边可以“捏”在一起？
+
+<img src="4-Geometry.assets/image-20230419100047614.png" alt="image-20230419100047614" style="zoom:67%;" />
+
+
+
+- Quadric Error Metrics 二次误差度量：哪些边可以“捏”在一起？
+
+> - 求点的平均，5个点“捏”成三个点（左）
+> - 求二次误差：最小化该点到连接平面内所有点的距离平方和
+
+<img src="4-Geometry.assets/image-20230419100110078.png" alt="image-20230419100110078" style="zoom:67%;" />
+
+- Quadric Error of Edge Collapse 根据二次误差进行坍缩
+
+> - 每一条边都假设进行坍缩，求解其对应的二次度量误差。然后取最小的
+> - 但问题是一条边的坍缩会引起其它边的二次度量误差，所以需要取最小，并动态更新受影响的边的二次度量误差
+> - 但这种方式只是局部最优，不能保证全局最优 — 贪心算法
+
+<img src="4-Geometry.assets/image-20230419100135162.png" alt="image-20230419100135162" style="zoom:67%;" />
+
+- Simplification via Quadric Error
+  - Iteratively collapse edges  Which edges? Assign score with quadric error metric* 
+    - approximate distance to surface as sum of distances to  planes containing triangles
+    - iteratively collapse edge with smallest score
+    -  greedy algorithm... great results!
+
+
+
+- Example：
+
+<img src="4-Geometry.assets/image-20230419102049208.png" alt="image-20230419102049208" style="zoom:67%;" />
