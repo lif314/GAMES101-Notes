@@ -320,27 +320,299 @@ For generality, we use the term objects instead of triangles  later (but doesn�
 
 ## Ray Tracing 2 (Acceleration & Radiometry)
 
+> - GTC news: DLSS 2.0  - https://zhuanlan.zhihu.com/p/116211994
+>
+> - GTC news: RTXGI - https://developer.nvidia.com/rtxgi
+
+###  Using AABBs to accelerate ray tracing
+
+#### Uniform Spatial Partitions (Grids)
+
+----
+
+**Preprocess – Build Acceleration Grid**
+
+- 寻找场景的包围盒
+
+<img src="5-Ray Tracing.assets/image-20230419191025770.png" alt="image-20230419191025770" style="zoom:67%;" />
+
+- 将包围盒分割成格子
+
+<img src="5-Ray Tracing.assets/image-20230419191046355.png" alt="image-20230419191046355" style="zoom:67%;" />
+
+- 查询与物体相交的格子（假设物体是空心的，不考虑内部）
+
+<img src="5-Ray Tracing.assets/image-20230419191100636.png" alt="image-20230419191100636" style="zoom:67%;" />
+
+----
+
+**Ray-Scene Intersection**
+
+> 光线与格子相遇，并且格子内有物体，则光线可能与格子内的物体相交，判断光线是否与物体相交
+
+<img src="5-Ray Tracing.assets/image-20230419191126603.png" alt="image-20230419191126603" style="zoom:67%;" />
+
+---
+
+**Grid Resolution?**
+
+> 包围盒需要分割为多少个格子？
+
+<img src="5-Ray Tracing.assets/image-20230419191144572.png" alt="image-20230419191144572" style="zoom:67%;" />
+
+- 密集格子：多次计算与格子求交
+
+<img src="5-Ray Tracing.assets/image-20230419191157497.png" alt="image-20230419191157497" style="zoom:67%;" />
+
+- 经验数：格子不能太稀疏，也不能太密集
+
+<img src="5-Ray Tracing.assets/image-20230419191210858.png" alt="image-20230419191210858" style="zoom:67%;" />
+
+- Uniform Grids – When They Fail 场景中空旷的区域，物体的分布不均匀。比如在较大的体育场中，放一个茶壶。
+
+<img src="5-Ray Tracing.assets/image-20230420081709536.png" alt="image-20230420081709536" style="zoom:67%;" />
+
+#### Spatial Partitions
+
+> 空间划分：在稀疏的地方不需要使用密集的格子
+
+- Spatial Partitioning Examples
+
+> - Oct-Tree: 把场景用包围盒，然后切成8份(3D空间)，子节点继续切成8份。停下来标准较多，视情况而定。随维数指数增长
+> - KD-Tree：每次只切一刀，只分为两个区域(2D)。如下，先水平划分，分成两个区域，然后又竖直进行划分。3D中循环绕着$x,y,z$轴依次划分。二叉树
+>
+> - BSP-Tree：不沿着$x,y,x$抽进行划分，而是自定义一个方向进行划分
+
+<img src="5-Ray Tracing.assets/image-20230420081026441.png" alt="image-20230420081026441" style="zoom:67%;" />
+
+----
+
+**KD-Tree Pre-Processing**
+
+- 先将A划分成两个部分
+
+<img src="5-Ray Tracing.assets/image-20230420081050604.png" alt="image-20230420081050604" style="zoom:67%;" />
+
+- 然后将A的两个部分都水平划分（示例划分一般）
+
+<img src="5-Ray Tracing.assets/image-20230420081105978.png" alt="image-20230420081105978" style="zoom:67%;" />
+
+- B中进行划分，并形成一棵二叉树。只在叶子节点存储相关的信息
+
+<img src="5-Ray Tracing.assets/image-20230420081119590.png" alt="image-20230420081119590" style="zoom:67%;" />
+
+**Data Structure for KD-Trees**
+
+- Internal nodes store
+  - split axis: x-, y-, or z-axis
+  - split position: coordinate of split plane along axis 不一定要从中间划分
+  - children: pointers to child nodes
+  -  No objects are stored in internal nodes 中间节点不存储物体信息
+-   Leaf nodes store
+  - list of objects
+
+----
+
+**Traversing a KD-Tree**
+
+- 光线追踪算法
+
+<img src="5-Ray Tracing.assets/image-20230420081249607.png" alt="image-20230420081249607" style="zoom:67%;" />
+
+- 先判断是否与最大的相交
+
+<img src="5-Ray Tracing.assets/image-20230420081300612.png" alt="image-20230420081300612" style="zoom:67%;" />
+
+- 然后判断是否与子节点相交。如果是子节点，则需要进行求交
+
+<img src="5-Ray Tracing.assets/image-20230420081312221.png" alt="image-20230420081312221" style="zoom:67%;" />
+
+- 与A的子节点查看是否相交
+
+<img src="5-Ray Tracing.assets/image-20230420081327288.png" alt="image-20230420081327288" style="zoom:67%;" />
+
+- 继续与子节点判断是否求交
+
+<img src="5-Ray Tracing.assets/image-20230420081337853.png" alt="image-20230420081337853" style="zoom:67%;" />
+
+- 继续判定
+
+<img src="5-Ray Tracing.assets/image-20230420081351582.png" alt="image-20230420081351582" style="zoom:67%;" />
+
+- 继续判定
+
+<img src="5-Ray Tracing.assets/image-20230420081402193.png" alt="image-20230420081402193" style="zoom:67%;" />
+
+- 相交于叶子节点，判定是否于格子中的物体相交
+
+<img src="5-Ray Tracing.assets/image-20230420081414414.png" alt="image-20230420081414414" style="zoom:67%;" />
+
+> **KD-Tree**
+>
+> - 如果光线与格子无交点，跳过；如果有交点，则需要与两个子节点判断是否相交，递归。
+> - 直到光线交与叶子节点，判断光线是否与其中的物体是否相交
+>
+> **存在的问题**
+>
+> - 如何判断物体是否与包围盒相交？**Very Hard**  — **KD-Tree目前用的不多了**
+> - 假设对象是三角形网格，很难判断三角形是否与空间划分线是否相交
+> - 物体可能与多个划分格子相交，如果都是叶子节点，则需要在每个叶子节点都存储物体信息，冗余。希望一个物体只在一个格子里。
 
 
 
 
 
+#### Object Partitions &  Bounding Volume Hierarchy (BVH)
 
+> 对象划分：边界体积层次 **BVH应用广泛** 
 
+**Bounding Volume Hierarchy (BVH)**
 
+- 用格子将场景包围
 
+<img src="5-Ray Tracing.assets/image-20230420084343412.png" alt="image-20230420084343412" style="zoom:67%;" />
 
+- 将物体划分为两个部分，然后用分别求包围盒
 
+<img src="5-Ray Tracing.assets/image-20230420084451979.png" alt="image-20230420084451979" style="zoom:67%;" />
 
+- 依次划分，也会形成两个子节点
 
+<img src="5-Ray Tracing.assets/image-20230420084501888.png" alt="image-20230420084501888" style="zoom:67%;" />
 
+- 继续划分
 
+<img src="5-Ray Tracing.assets/image-20230420084514487.png" alt="image-20230420084514487" style="zoom:67%;" />
 
+- 当达到一定条件时，停止划分。可以按照KD-Tree一样按照轴循环划分。在叶子节点中存储物体的信息
 
+<img src="5-Ray Tracing.assets/image-20230420084524943.png" alt="image-20230420084524943" style="zoom:67%;" />
 
+> - 好性质：一个物体只可能在一个包围盒中
+> - 空间划分不严格，不同的盒子可能相交
 
+----
 
+**Building BVHs**
 
+- How to subdivide a node? 如何划分节点
+  - Choose a dimension to split 像KD-Tree一样循环$x,y,z$轴划分等
+  - Heuristic #1: Always choose the longest axis in node 沿着最长的轴划分
+  - Heuristic #2: Split node at location of **median** object 在中间的物体处进行划分，保证每个盒子中物体数量差不多，树比较平衡。**无序的数中找第$i$大的数，使用快速选择算法$O(n)$**
+
+- Termination criteria? 何时停止划分？
+  - Heuristic: stop when node contains few elements  (e.g. 5) 当盒子里包含较少的物体时
+
+**Data Structure for BVHs**
+
+- Internal nodes store 中间节点只存储包围盒和子节点
+  - Bounding box
+  - Children: pointers to child nodes 
+- Leaf nodes store 叶子节点存储物体信息和包围盒
+  - Bounding box 
+  - List of objects
+- Nodes represent subset of primitives in scene
+  - All objects in subtree
+
+---
+
+**BVH Traversal**
+
+<img src="5-Ray Tracing.assets/image-20230420085812575.png" alt="image-20230420085812575" style="zoom:67%;" />
+
+**Spatial vs Object Partitions**
+
+> - 空间划分
+> - 对象划分
+
+<img src="5-Ray Tracing.assets/image-20230420085831564.png" alt="image-20230420085831564" style="zoom:67%;" />
+
+### Basic radiometry (辐射度量学)
+
+**Radiometry — Motivation**
+
+> - Blinn-Phong模型中光的强度$I$是一个数，它应该有具体的物理意义
+> - Whitted style光线追踪每次折射、反射需要具体能量损失的度量
+
+<img src="5-Ray Tracing.assets/image-20230420091840132.png" alt="image-20230420091840132" style="zoom:67%;" />
+
+**Radiometry**：如何描述光照，定义光在空间中的属性，遵循几何光学原理
+
+> - Radiant flux
+>
+> - intensity
+>
+> - irradiance
+>
+> - radiance
+
+<img src="5-Ray Tracing.assets/image-20230420092302039.png" alt="image-20230420092302039" style="zoom:50%;" />
+
+> - WHY
+> - WHAT
+>
+> - HOW: 最不重要的就是HOW，怎么运作是次要的问题
+
+#### Radiant Energy and Flux (Power)
+
+> - Radiant energy: 电磁辐射的能量，单位焦耳$J$
+> - Radiant flux(power): 单位时间内的光源辐射的能量（power类似功率）,单位瓦特$W$。另一个单位$lm$描述了亮度
+
+<img src="5-Ray Tracing.assets/image-20230420092532822.png" alt="image-20230420092532822" style="zoom:67%;" />
+
+**Flux – #photons flowing through a sensor in unit time**
+
+> Flux: 单位时间内穿过平面的光子数。
+
+<img src="5-Ray Tracing.assets/image-20230420092557698.png" alt="image-20230420092557698" style="zoom:67%;" />
+
+**Important Light Measurements of Interest**
+
+> - Radiant Intensity：光源向四面八方辐射的能量
+> - Irradiance：物体表面接受到光的能量
+> - Radiance：光线传播中的能量
+
+<img src="5-Ray Tracing.assets/image-20230420092616868.png" alt="image-20230420092616868" style="zoom:67%;" />
+
+#### Radiant Intensity
+
+**Radiant Intensity**：单位立体角内的power(功率)/flux。单位candela
+
+<img src="5-Ray Tracing.assets/image-20230420092639063.png" alt="image-20230420092639063" style="zoom:67%;" />
+
+---
+
+**Angles and Solid Angles**
+
+> - 弧度角：$\theta=\frac{l}{r}$
+> - 立体角：三维空间中一个球，从球心出发一个椎对应的球面面积除以半径的平方 $\Omega=\frac{A}{r^2}$
+
+<img src="5-Ray Tracing.assets/image-20230420092703676.png" alt="image-20230420092703676" style="zoom:67%;" />
+
+**Differential Solid Angles**：可微立体角–> 单位立体角(单位面积除以$r^2$)
+
+<img src="5-Ray Tracing.assets/image-20230420092721549.png" alt="image-20230420092721549" style="zoom:67%;" />
+
+- 球对应的立体角：球面积分
+
+<img src="5-Ray Tracing.assets/image-20230420092731449.png" alt="image-20230420092731449" style="zoom:67%;" />
+
+- $\omega$ as a direction vector：三维空间中的方向，可由$\theta,\phi$定义
+
+<img src="5-Ray Tracing.assets/image-20230420092829131.png" alt="image-20230420092829131" style="zoom:67%;" />
+
+**Isotropic Point Source**
+
+> **点光源：** 各向同性，均匀辐射
+>
+> - flux(power)：沿着球面进行积分，就是整个点光源的power
+> - intensity: $I=\frac{\Phi}{4\pi}$ 每个方向上的power/flux
+
+<img src="5-Ray Tracing.assets/image-20230420092838123.png" alt="image-20230420092838123" style="zoom:67%;" />
+
+**Modern LED Light**
+
+<img src="5-Ray Tracing.assets/image-20230420092852179.png" alt="image-20230420092852179" style="zoom:67%;" />
 
 ## Ray Tracing 3 (Light Transport & Global Illumination)
 
