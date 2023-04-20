@@ -1106,7 +1106,15 @@ For generality, we use the term objects instead of triangles  later (but doesn�
 
 **Things we haven’t covered / won’t cover**
 
+> - 怎么进行最好的采样？重要性采样理论
+> - 如何生成随机数？
+> - 什么是最好的PDF来指导采样？
+
 <img src="5-Ray Tracing.assets/image-20230420154013590.png" alt="image-20230420154013590" style="zoom:67%;" />
+
+> - 采样物体和光源：MIS采样方法
+> - 每个像素打出多条光线，为什么平均起来就是这个像素？Pixel Reconstruction Filter
+> - 如何把radiance转换为颜色值？$\gamma$校正（[gamma correction](https://en.wikipedia.org/wiki/Gamma_correction)）
 
 <img src="5-Ray Tracing.assets/image-20230420154027707.png" alt="image-20230420154027707" style="zoom:67%;" />
 
