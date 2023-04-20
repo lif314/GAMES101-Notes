@@ -576,7 +576,7 @@ For generality, we use the term objects instead of triangles  later (but doesn�
 
 #### Radiant Intensity
 
-**Radiant Intensity**：单位立体角内的power(功率)/flux。单位candela
+**Radiant Intensity**：单位立体角内辐射出的power(功率)/flux。单位candela
 
 <img src="5-Ray Tracing.assets/image-20230420092639063.png" alt="image-20230420092639063" style="zoom:67%;" />
 
@@ -589,7 +589,9 @@ For generality, we use the term objects instead of triangles  later (but doesn�
 
 <img src="5-Ray Tracing.assets/image-20230420092703676.png" alt="image-20230420092703676" style="zoom:67%;" />
 
-**Differential Solid Angles**：可微立体角–> 单位立体角(单位面积除以$r^2$)
+**Differential Solid Angles**：微分立体角–> 单位立体角(单位面积除以$r^2$)
+
+> $\theta\phi$坐标系对球面不是均匀划分
 
 <img src="5-Ray Tracing.assets/image-20230420092721549.png" alt="image-20230420092721549" style="zoom:67%;" />
 
@@ -614,75 +616,497 @@ For generality, we use the term objects instead of triangles  later (but doesn�
 
 <img src="5-Ray Tracing.assets/image-20230420092852179.png" alt="image-20230420092852179" style="zoom:67%;" />
 
+- Review:
+
+<img src="5-Ray Tracing.assets/image-20230420103316812.png" alt="image-20230420103316812" style="zoom:67%;" />
+
+#### Irradiance
+
+- 定义：表面一个点上单位面积内吸收的power（面必须与光线**垂直**，或者投影在垂直方向上）
+
+<img src="5-Ray Tracing.assets/image-20230420103354701.png" alt="image-20230420103354701" style="zoom:67%;" />
+
+**Lambert’s Cosine Law**
+
+<img src="5-Ray Tracing.assets/image-20230420103415703.png" alt="image-20230420103415703" style="zoom:67%;" />
+
+**Why Do We Have Seasons?**
+
+<img src="5-Ray Tracing.assets/image-20230420103443523.png" alt="image-20230420103443523" style="zoom:67%;" />
+
+**Correction: Irradiance Falloff**
+
+> 点光源传输过程中能量的变化。Intensity没有变化，而是irradiance在衰减
+
+
+
+<img src="5-Ray Tracing.assets/image-20230420103803932.png" alt="image-20230420103803932" style="zoom:67%;" />
+
+
+
+
+
+
+
+#### Radiance
+
+> 辐射度：描述光线在传播过程中的属性。
+
+<img src="5-Ray Tracing.assets/image-20230420103818403.png" alt="image-20230420103818403" style="zoom:67%;" />
+
+- Radiance：单位立体角和单位投影面积内的power
+
+> 在微小面积（单位面积）上从某个方向（单位立体角）辐射能量
+
+<img src="5-Ray Tracing.assets/image-20230420103830002.png" alt="image-20230420103830002" style="zoom:67%;" />
+
+>**等价**：
+>
+>- Radiance是单位立体角内的Irradiance。两者区别是是否有方向性。Irradiance是$dA$上来自所有方向所吸收的能量，而Radiance是从某个方向上（立体角）上吸收的能量。
+>- Radiance是单位投影面积内的Intensity。Intensity是某个立体角上所辐射出的能量，而Radiance是所有立体角方向（某个小面积）所辐射出的能量。
+
+<img src="5-Ray Tracing.assets/image-20230420103843200.png" alt="image-20230420103843200" style="zoom:67%;" />
+
+
+
+**Incident Radiance**
+
+> Irradiance是$dA$上来自所有方向所吸收的能量，而Radiance是从某个方向上（立体角）上吸收的能量。
+
+<img src="5-Ray Tracing.assets/image-20230420103902167.png" alt="image-20230420103902167" style="zoom:67%;" />
+
+**Exiting Radiance**
+
+> Intensity是某个立体角上所辐射出的能量，而Radiance是所有立体角方向（某个小面积）所辐射出的能量。
+
+<img src="5-Ray Tracing.assets/image-20230420103920180.png" alt="image-20230420103920180" style="zoom:67%;" />
+
+**Irradiance vs. Radiance**
+
+> - Irradiance：$dA$上吸收到的所有的power
+>
+> - Radiance：$dA$上某个方向上吸收的power
+> - **Radiance沿着方向进行积分就是Irradiance**
+
+<img src="5-Ray Tracing.assets/image-20230420103938821.png" alt="image-20230420103938821" style="zoom:67%;" />
+
 ## Ray Tracing 3 (Light Transport & Global Illumination)
 
+### Bidirectional Reflectance  Distribution Function  (BRDF)
+
+> 双向反射分布函数 BRDF
+
+**Reflection at a Point**
+
+> 从Radiance的角度看反射：从某个方向进来，然后从其它方向反射射出，如何计算能量的吸收与辐射？
+>
+> - 假设从方向$\omega_i$进入的光线的power为$E$，在面积$dA$处发生反射，从方向$\omega_r$反射出去
+> - $dA$接受的能量：irradiance
+> - $dA$反射出去的能量：radiance, 但不确定具体某个方向的power,可以定义一个函数来描述
+
+<img src="5-Ray Tracing.assets/image-20230420111954735.png" alt="image-20230420111954735" style="zoom:67%;" />
+
+**BRDF**
+
+> - 定义函数$f_r(\omega_i \rightarrow w_r)$描述从$w_i$入射的光线的power（irradiance）从方向$w_r$辐射的power（radiance）之间的比例关系。
+> - BRDF定义了辐射方向的能量分布。如果是镜面反射，则只有反射出去的方向有能量；如果是漫反射，则均匀的分配到不同的方向上
+> - 描述了光线与物体是如何作用的，决定了物体不同的材质。
+
+<img src="5-Ray Tracing.assets/image-20230420112012576.png" alt="image-20230420112012576" style="zoom:67%;" />
+
+-----
+
+**The Reflection Equation**
+
+> - BRDF定义了从某个方向$w_i$入射光线的power经过反射到某方向$w_r$的能量分配
+> - 反射方程：沿着入射方向进行积分，就能计算$w_r$出射方向上所有的power。（定义了任何一个着色点，在各种不同的光照环境下，任何一个入射光线方向对出射方向的贡献）
+
+<img src="5-Ray Tracing.assets/image-20230420112032721.png" alt="image-20230420112032721" style="zoom:67%;" />
+
+> 任何一种着色模型，只要定义BRDF就可以得到观察方向的power
+
+**Challenge: Recursive Equation**
+
+> - 难点：到达着色点的入射光线可能来自光源，也可能来自多次弹射的结果 **递归**
+
+<img src="5-Ray Tracing.assets/image-20230420112051834.png" alt="image-20230420112051834" style="zoom:67%;" />
+
+---
+
+**The Rendering Equation**
+
+> 渲染方程：如果物体自身会发光，则需要加上自身的power $L_e$，其中$\cos{\theta} = n \cdot w_i$。假设所有方向都是向外的，如$w_i$，即所有光线从半球（因为下半球贡献的power为0，照不到呀！！！）圆心辐射
+
+<img src="5-Ray Tracing.assets/image-20230420112110944.png" alt="image-20230420112110944" style="zoom:67%;" />
+
+> 膜拜大佬祖师爷：https://en.wikipedia.org/wiki/Jim_Kajiya
+
+### Understanding the rendering equation
+
+**Reflection Equation**
+
+> 假设只有一个点光源，一个入射方向，对辐射方向的贡献
+
+<img src="5-Ray Tracing.assets/image-20230420130612205.png" alt="image-20230420130612205" style="zoom:67%;" />
+
+> 如果是多个点光源，则将每个点光源的入射的power求和即可
+
+<img src="5-Ray Tracing.assets/image-20230420130624627.png" alt="image-20230420130624627" style="zoom:67%;" />
+
+> 如果是面光源，则把面上一个点看作点光源，然后进行积分即可
+
+<img src="5-Ray Tracing.assets/image-20230420130644548.png" alt="image-20230420130644548" style="zoom:67%;" />
+
+**Rendering Equation**
+
+> 如果除了光源，还有其它物体的反射光。将物体的反射面当作光源即可。
+
+<img src="5-Ray Tracing.assets/image-20230420130715689.png" alt="image-20230420130715689" style="zoom:67%;" />
+
+**Rendering Equation (Kajiya 86)**
+
+<img src="5-Ray Tracing.assets/image-20230420130802429.png" alt="image-20230420130802429" style="zoom:67%;" />
+
+------
+
+**Rendering Equation as  Integral Equation**：递归，光线多次弹射
+
+> - 先定义物体的材质：$L_e, f$
+> - 使用Fredholm积分方程进行改写：
+
+<img src="5-Ray Tracing.assets/image-20230420130829263.png" alt="image-20230420130829263" style="zoom:67%;" />
 
 
 
+**Linear Operator Equation**
 
+> - 进一步简化为算子形式（数学证明）
+> - $L=E+KL$: 所有光源辐射出来的能量+辐射出来的能量被反射的能量
 
+<img src="5-Ray Tracing.assets/image-20230420130848773.png" alt="image-20230420130848773" style="zoom:67%;" />
 
+-----
 
+**Ray Tracing and extensions**
 
+> - 解方程，求解$L$，$(I-K)^{-1}$泰勒展开。。。
 
+<img src="5-Ray Tracing.assets/image-20230420130910167.png" alt="image-20230420130910167" style="zoom:67%;" />
 
+**Ray Tracing**
 
+> - L：0次弹射，1次反射，…，多次弹射
+> - 直接光照：光线弹射1次
+> - 间接光照：光线弹射2次以上
+> - 全局光照：直接光照+间接光照
 
+<img src="5-Ray Tracing.assets/image-20230420130942123.png" alt="image-20230420130942123" style="zoom:67%;" />
 
+> - 光栅化着色：只包含0次弹射和1次弹射
 
+<img src="5-Ray Tracing.assets/image-20230420130954268.png" alt="image-20230420130954268" style="zoom:67%;" />
 
+-----
+
+**Demo**
+
+- 直接光照：光源直接照射到的地方
+
+<img src="5-Ray Tracing.assets/image-20230420131011526.png" alt="image-20230420131011526" style="zoom:50%;" />
+
+- 一次间接光照：直接光照+间接光照
+
+<img src="5-Ray Tracing.assets/image-20230420131025297.png" alt="image-20230420131025297" style="zoom:50%;" />
+
+- 2次全局光照
+
+<img src="5-Ray Tracing.assets/image-20230420131040455.png" alt="image-20230420131040455" style="zoom:50%;" />
+
+- 4次全局关照：上方玻璃球经过3次以上才会亮<img src="5-Ray Tracing.assets/image-20230420131107126.png" alt="image-20230420131107126" style="zoom:50%;" />
+
+- 8次全局光照
+
+<img src="5-Ray Tracing.assets/image-20230420131125934.png" alt="image-20230420131125934" style="zoom:50%;" />
+
+- 16次全局光照
+
+<img src="5-Ray Tracing.assets/image-20230420131139815.png" alt="image-20230420131139815" style="zoom:50%;" />
+
+> - 全局光照最后会收敛到某一个亮度。能量守恒
+> - 如果是相机一直按，会出现过曝的问题，能量一直增加。
+
+### Probability Review
+
+**Random Variables** 随机变量
+
+<img src="5-Ray Tracing.assets/image-20230420131212904.png" alt="image-20230420131212904" style="zoom:67%;" />
+
+**Probabilities** 概率
+
+<img src="5-Ray Tracing.assets/image-20230420131232427.png" alt="image-20230420131232427" style="zoom:67%;" />
+
+**Expected Value of a Random Variable** 随机变量的期望
+
+<img src="5-Ray Tracing.assets/image-20230420131248934.png" alt="image-20230420131248934" style="zoom:67%;" />
+
+**Continuous Case: Probability Distribution Function (PDF)** 概率分布函数
+
+> PDF：取某一值的概率是多少呢？构成一个连续的函数
+
+<img src="5-Ray Tracing.assets/image-20230420131316398.png" alt="image-20230420131316398" style="zoom:67%;" />
+
+**Function of a Random Variable**
+
+<img src="5-Ray Tracing.assets/image-20230420131334027.png" alt="image-20230420131334027" style="zoom:67%;" />
 
 
 
 ## Ray Tracing 4 (Monte Carlo Path Tracing)
 
+> 蒙特卡洛路径追踪
+
+### Monte Carlo Integration
+
+> 蒙特卡洛积分：数值计算
+
+- 以概率的形式求解较难的积分
+
+<img src="5-Ray Tracing.assets/image-20230420145906838.png" alt="image-20230420145906838" style="zoom:67%;" />
+
+- 黎曼积分：$a,b$之间均匀划分，每一份当作微小的长方形
+- 蒙特卡洛积分：随机取一个数，知道对应的$x$和$f(x)$，然后假设整个曲线就是长方形，高度$f(x)$，宽度$ab$。重复多次，最后将每次面积进行平均化
+
+<img src="5-Ray Tracing.assets/image-20230420145920351.png" alt="image-20230420145920351" style="zoom:67%;" />
+
+> - 求定积分的结果
+> - 随机采样位置$X_i$
+> - 积分结果可以近似为每次$X_i$结果的平均
+
+<img src="5-Ray Tracing.assets/image-20230420145932521.png" alt="image-20230420145932521" style="zoom:67%;" />
+
+----
+
+**Example: Uniform Monte Carlo Estimator**
+
+<img src="5-Ray Tracing.assets/image-20230420150024199.png" alt="image-20230420150024199" style="zoom:67%;" />
+
+- 化简公式
+
+<img src="5-Ray Tracing.assets/image-20230420150033641.png" alt="image-20230420150033641" style="zoom:67%;" />
+
+> **蒙特卡洛积分：**
+>
+> - 适用于任何函数的积分：根据PDF进行采样即可，不需要关心积分域
+> - 采样点越多，准确度越高
 
 
 
+<img src="5-Ray Tracing.assets/image-20230420150046924.png" alt="image-20230420150046924" style="zoom:67%;" />
+
+### Path Tracing
+
+> - 路径追踪：Path tracing
+> - 光线追踪：Ray tracing,(Whitted-Style) 
+>   - 当光线打在光滑物体，发生反射/折射
+>   - 当光线打在漫反射物体表面，光线停止
+
+#### Motivation: Whitted-Style Ray Tracing
+
+<img src="5-Ray Tracing.assets/image-20230420152926070.png" alt="image-20230420152926070" style="zoom:67%;" />
+
+> 问题1：左（specular，非常光滑，反射方向接近半程向量），右（Glossy，一般光滑，镜面反射的方向与半程向量差距较大）。
+
+<img src="5-Ray Tracing.assets/image-20230420152939661.png" alt="image-20230420152939661" style="zoom:67%;" />
+
+> 问题2：漫反射材质。Whitted-Style光线打在漫反射物体上没有考虑光线继续传播，并在漫反射物体之间的弹射情况
+
+<img src="5-Ray Tracing.assets/image-20230420152958028.png" alt="image-20230420152958028" style="zoom:67%;" />
+
+**Whitted-Style Ray Tracing is Wrong**
+
+> 求解渲染方程：
+>
+> - 积分
+> - 递归的光线
+
+<img src="5-Ray Tracing.assets/image-20230420153017009.png" alt="image-20230420153017009" style="zoom:67%;" />
+
+#### A Simple Monte Carlo Solution
+
+> 简单场景：只考虑一个点的**直接光照**，假设自身并不发光。所有方向都认为向外。求解该点的直接光照
+
+<img src="5-Ray Tracing.assets/image-20230420153133959.png" alt="image-20230420153133959" style="zoom:67%;" />
+
+> 一个点的渲染方程
+>
+> - 直接光照：所有的入射光都直接来自光源。$L_i$来自光源就是某个值，不是来自光源就是0
+
+<img src="5-Ray Tracing.assets/image-20230420153149324.png" alt="image-20230420153149324" style="zoom:67%;" />
+
+> **蒙特卡洛求解：**
+>
+> - 随机选择一个方向，计算$f(x)$
+> - PDF：如何对半球进行采样？假设是**均匀采样**，面积分之一
+
+<img src="5-Ray Tracing.assets/image-20230420153159726.png" alt="image-20230420153159726" style="zoom:67%;" />
+
+> **蒙特卡洛积分形式：** 
+
+<img src="5-Ray Tracing.assets/image-20230420153217388.png" alt="image-20230420153217388" style="zoom:67%;" />
+
+> **伪代码：**
+>
+> - 随机选择一个方向
+> - 如果这个方向的光线来自光源，则为$L_o$，否则为0
+
+<img src="5-Ray Tracing.assets/image-20230420153228198.png" alt="image-20230420153228198" style="zoom:67%;" />
+
+#### Introducing Global Illumination
+
+> 直接光照：如果光线不是直接来自光源，而是从某物体反射而来（可以假设Q是一个光源），则**Q辐射到P的光照就是Q点本身的直接光照**
+
+<img src="5-Ray Tracing.assets/image-20230420153248421.png" alt="image-20230420153248421" style="zoom:67%;" />
+
+> 递归：加上Q点所产生的直接光照 –> 全局光照
+
+<img src="5-Ray Tracing.assets/image-20230420153301317.png" alt="image-20230420153301317" style="zoom:67%;" />
+
+> 递归会导致光线数量爆炸。
+
+#### Path Tracing
+
+> 问题1：光线数量会爆炸。
+
+<img src="5-Ray Tracing.assets/image-20230420153403949.png" alt="image-20230420153403949" style="zoom:67%;" />
+
+> - 解决光线爆炸：随机朝**一个**方向进行采样。$N=1$叫做路径追踪，$N\neq1$叫做分布式路径追踪
+
+<img src="5-Ray Tracing.assets/image-20230420153412844.png" alt="image-20230420153412844" style="zoom:67%;" />
+
+**Ray Generation**
+
+> - $N=1$会导致噪声较大（打在物体上随机选择一个方向进行反射）。
+> - 对于一个像素，可以发射多条路径来进行采样。使用足够多的paths来获取着色点的值，最后求取平均值。
+
+<img src="5-Ray Tracing.assets/image-20230420153422865.png" alt="image-20230420153422865" style="zoom:67%;" />
 
 
 
+> 从摄像机位置，从某像素打出光线。如果光线打在场景中某个物体，求取该点的着色值。
+
+<img src="5-Ray Tracing.assets/image-20230420153446926.png" alt="image-20230420153446926" style="zoom:67%;" />
+
+**Path Tracing**
+
+> 问题2：递归不会停止。如何判断何时停止？
+
+<img src="5-Ray Tracing.assets/image-20230420153519578.png" alt="image-20230420153519578" style="zoom:67%;" />
+
+> 现实中光线也不会停止，应该限制光线弹射的次数。3次效果。
+
+<img src="5-Ray Tracing.assets/image-20230420153531563.png" alt="image-20230420153531563" style="zoom:67%;" />
+
+> 限制光线弹射17次效果。
+
+<img src="5-Ray Tracing.assets/image-20230420153544875.png" alt="image-20230420153544875" style="zoom:67%;" />
+
+> 如何判断合理的停止次数？
+
+#### Solution: Russian Roulette (RR)
+
+> **俄罗斯轮盘赌算法：**
+>
+> - 装入子弹，有一定的概率会生存
+
+<img src="5-Ray Tracing.assets/image-20230420153609562.png" alt="image-20230420153609562" style="zoom:67%;" />
+
+> **决定一定的概率会停止光线是否继续弹射**
+>
+> - 定义一个超参数概率$p$，以概率$p$打出光线得到的结果为$L_o/p$；以概率$1-p$不打出光线，返回值为$0$。最后的期望依然是$L_o$，秒！！！
+
+<img src="5-Ray Tracing.assets/image-20230420153626504.png" alt="image-20230420153626504" style="zoom:67%;" />
+
+> - 手动设置概率$P_{RR}$
+> - 随机在$[0,1]$内选择一个数$ksi$
+> - 如果$ksi>P_{RR}$,则光线停止；否则正常辐射
+
+<img src="5-Ray Tracing.assets/image-20230420153642734.png" alt="image-20230420153642734" style="zoom:67%;" />
+
+> **正确的path Tracing方法**
+>
+> - 低效！！！
+> - SPP (samples per pixel)：每个像素打出多少光线
+
+<img src="5-Ray Tracing.assets/image-20230420153652520.png" alt="image-20230420153652520" style="zoom:67%;" />
+
+**Sampling the Light**
+
+> **低效的原因：**
+>
+> - 是否能打到光源看概率（均匀的向四面八方采样的结果）
+> - 使用更好的PDF进行采样（在光源上采样），而不是均匀采样
+
+<img src="5-Ray Tracing.assets/image-20230420153718060.png" alt="image-20230420153718060" style="zoom:67%;" />
+
+- **Sampling the Light (pure math)**
+
+> **在光源上进行采样：**
+>
+> - 将设光源的面积为$A$，$PDF=1/A$
+> - 渲染方程在物体的积分域上，需要在物体上进行采样。转换积分域，写成在光源上的积分
+
+<img src="5-Ray Tracing.assets/image-20230420153735442.png" alt="image-20230420153735442" style="zoom:67%;" />
+
+> 将$d\omega$转换为$dA$：
+>
+> - $dA$光源上一个很小的面积
+> - $d \omega$是$dA$投影在球表面上的单位立体角
+
+<img src="5-Ray Tracing.assets/image-20230420153746323.png" alt="image-20230420153746323" style="zoom:67%;" />
+
+> **改写渲染方程：**对光源采样，对光源进行积分
+
+<img src="5-Ray Tracing.assets/image-20230420153809085.png" alt="image-20230420153809085" style="zoom:67%;" />
+
+> **光线采样：**
+>
+> - 来自光源的贡献：直接在光源上采样，不需要RR
+> - 来自于其它非光源的贡献：进行RR
+
+<img src="5-Ray Tracing.assets/image-20230420153820529.png" alt="image-20230420153820529" style="zoom:67%;" />
+
+> **伪代码**
+>
+> - 光源贡献：对光源采样，在光源上积分
+> - 非光源贡献：在物体上采样，在物体上积分
+
+<img src="5-Ray Tracing.assets/image-20230420153837746.png" alt="image-20230420153837746" style="zoom:67%;" />
+
+> **上面假设了光源和着色点之间不存在遮挡物**
+>
+> - 从光源打一条光线，判断是否被遮挡
+
+<img src="5-Ray Tracing.assets/image-20230420153850017.png" alt="image-20230420153850017" style="zoom:67%;" />
+
+> 路径追踪：点光源非常困难！！！可以假设为较小的面积
+
+**Is Path Tracing Correct?**
+
+> The Cornell box — http://www.graphics.cornell.edu/online/box/compare.html
+
+<img src="5-Ray Tracing.assets/image-20230420153924143.png" alt="image-20230420153924143" style="zoom:67%;" />
 
 
 
+**Ray tracing: Previous vs. Modern Concepts**
 
+> Ray Tracing现代含义: 所有光线传播的集合
 
+<img src="5-Ray Tracing.assets/image-20230420153948516.png" alt="image-20230420153948516" style="zoom:67%;" />
 
+**Things we haven’t covered / won’t cover**
 
+<img src="5-Ray Tracing.assets/image-20230420154013590.png" alt="image-20230420154013590" style="zoom:67%;" />
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<img src="5-Ray Tracing.assets/image-20230420154027707.png" alt="image-20230420154027707" style="zoom:67%;" />
 
