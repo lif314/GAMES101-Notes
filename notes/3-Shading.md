@@ -14,6 +14,8 @@
 
 
 
+[toc]
+
 
 
 
@@ -649,7 +651,6 @@ Point Query vs. (Avg.) Range Query
 <div align="center">
     <img src="3-Shading.assets/image-20230418160934176.png" alt="image-20230418160934176" style="zoom:50%;" />
 </div>
-
 
 
 

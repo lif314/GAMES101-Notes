@@ -11,13 +11,13 @@
 
 
 
+[toc]
+
+
+
 ## Rasterization 1: Triangles
 
 > 当做完View Transformation后，所有场景都在标准立方体里。下一步就是光栅化：将其画在屏幕上
-
-
-
-
 
 ### Perspective Projection
 
